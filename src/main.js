@@ -7,6 +7,9 @@ import { createIsland } from './objects/Island.js';
 import { createHouse } from './objects/House.js';
 import { createRoad } from './objects/Road.js';
 import { createTree } from './objects/Tree.js';
+import { createPier } from './objects/Pier.js';
+import { createLighthouse } from './objects/Lighthouse.js';
+import { createBoat } from './objects/Boat.js';
 
 // ① シーン
 const scene = new THREE.Scene();
@@ -54,7 +57,16 @@ scene.add(createTree(-3, 1));
 scene.add(createTree(3, -1));
 scene.add(createTree(3, 1));
 
-// ⑨ カメラ操作
+// ⑨ 港の桟橋
+scene.add(createPier(4.8, 0));
+
+// ⑩ 灯台
+scene.add(createLighthouse(3, 3));
+
+// ⑪ 船
+scene.add(createBoat(6.5, 2));
+
+// ⑫ カメラ操作
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 0, 0);
 controls.enableDamping = true;
@@ -63,7 +75,7 @@ controls.maxDistance = 30;
 controls.maxPolarAngle = Math.PI / 2.05;
 controls.update();
 
-// ⑩ ブラウザサイズ変更対応
+// ⑬ ブラウザサイズ変更対応
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -71,7 +83,7 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// ⑪ 描画ループ
+// ⑭ 描画ループ
 function animate() {
   controls.update();
   renderer.render(scene, camera);
