@@ -23,7 +23,12 @@ export function createIsland(scene) {
   scene.add(grass);
 
   // 海
-  const seaGeometry = new THREE.PlaneGeometry(200, 200);
+  const seaGeometry = new THREE.PlaneGeometry(
+    200,
+    200,
+    100,
+    100
+);
   const seaMaterial = new THREE.MeshStandardMaterial({
     color: 0x338fc2,
     roughness: 0.5,
@@ -34,4 +39,5 @@ export function createIsland(scene) {
   sea.rotation.x = -Math.PI / 2;
   sea.position.y = -1.2;
   scene.add(sea);
+  return sea;
 }
