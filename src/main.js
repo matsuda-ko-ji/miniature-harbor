@@ -39,7 +39,29 @@ sunlight.position.set(5, 10, 5);
 scene.add(sunlight);
 
 // ⑤ 島と海
-createIsland(scene);
+const sea = createIsland(scene);
+
+function updateWaves(elapsed) {
+  const positions = sea.geometry.attributes.position;
+
+  for (let i = 0; i < positions.count; i++) {
+    const x = positions.getX(i);
+    const y = positions.getY(i);
+
+    // 2方向の波を重ねる
+    const wave1 = Math.sin(x * 0.7 + elapsed * 1.5) * 0.07;
+    const wave2 = Math.sin(y * 0.5 + elapsed * 1.1) * 0.04;
+
+    // 平面のローカルZ方向へ変形する
+    positions.setZ(i, wave1 + wave2);
+  }
+
+  // 頂点情報をGPUに再送する
+  positions.needsUpdate = true;
+
+  // 光の当たり方を更新
+  sea.geometry.computeVertexNormals();
+}
 
 // ⑥ 道路
 scene.add(createRoad(0, 0, 1.2, 7));
@@ -61,10 +83,19 @@ scene.add(createTree(3, 1));
 scene.add(createPier(4.8, 0));
 
 // ⑩ 灯台
-scene.add(createLighthouse(3, 3));
+// 灯台を生成して変数に保持
+const lighthouse = createLighthouse(3, 3);
+
+// シーンに追加
+scene.add(lighthouse);
 
 // ⑪ 船
-scene.add(createBoat(6.5, 2));
+// 船を生成
+const boat = createBoat(6.5, 2);
+scene.add(boat);
+
+// 船の基準位置を保存
+const boatBaseY = boat.position.y;
 
 // ⑫ カメラ操作
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -83,10 +114,29 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-// ⑭ 描画ループ
+//⑭ アニメーション用タイマー
+const timer = new THREE.Timer();
+timer.connect(document);
+
+// ⑮ 描画ループ
 function animate() {
+  timer.update();
+
+  const elapsed = timer.getElapsed();
+
+  // ここにアニメーション処理を追加していく
+  // 船を上下に揺らす
+  boat.position.y = boatBaseY + Math.sin(elapsed * 2) * 0.08;
+
+  // 船を左右に少し傾ける
+  boat.rotation.z = Math.sin(elapsed * 1.5) * 0.04;
+
+  // 灯台のライトを回転
+  lighthouse.userData.beacon.rotation.y = elapsed * 0.6;
+
   controls.update();
   renderer.render(scene, camera);
+  updateWaves(elapsed);
 }
 
 renderer.setAnimationLoop(animate);

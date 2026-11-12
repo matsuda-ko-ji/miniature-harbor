@@ -53,5 +53,53 @@ export function createLighthouse(x, z) {
   // 灯台の配置
   lighthouse.position.set(x, 0.2, z);
 
+  // 回転するライトをまとめるGroup
+  const beacon = new THREE.Group();
+  beacon.position.y = 2.45;
+
+  // 黄色い光源
+  const light = new THREE.SpotLight(
+    0xffdf80,
+    50,
+    12,
+    Math.PI / 9,
+    0.6
+  );
+
+  light.position.set(0, 0, 0);
+  beacon.add(light);
+
+  // 光が向かう方向
+  light.target.position.set(5, -1.5, 0);
+  beacon.add(light.target);
+
+  // 光のビームを可視化する
+  const beamGeometry = new THREE.ConeGeometry(
+    0.7,
+    5,
+    16,
+    1,
+    true
+  );
+
+  const beamMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffe58a,
+    transparent: true,
+    opacity: 0.13,
+    depthWrite: false,
+    side: THREE.DoubleSide
+  });
+
+  const beam = new THREE.Mesh(beamGeometry, beamMaterial);
+
+  beam.rotation.z = Math.PI / 2;
+  beam.position.x = 2.5;
+  beacon.add(beam);
+
+  lighthouse.add(beacon);
+
+  // main.jsから回転を制御できるように保持
+  lighthouse.userData.beacon = beacon;
+
   return lighthouse;
 }
