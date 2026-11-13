@@ -1,0 +1,61 @@
+
+name: Deploy Miniature Harbor
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # ① GitHubからソースコードを取得
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ② Node.jsの環境を準備
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # ③ 依存ライブラリをインストール
+      - name: Install dependencies
+        run: npm ci
+
+      # ④ 公開用ファイルを生成
+      - name: Build
+        run: npm run build
+
+      # ⑤ GitHub Pagesを設定
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      # ⑥ distをアップロード
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./dist
+
+      # ⑦ GitHub Pagesへ公開
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
