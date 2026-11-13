@@ -20,3 +20,67 @@ body {
 canvas {
   display: block;
 }
+
+/* 時間帯切り替えパネル */
+.time-panel {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
+
+  padding: 16px;
+  border-radius: 12px;
+
+  background: rgba(20, 30, 45, 0.85);
+  color: #ffffff;
+
+  font-family: sans-serif;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.time-panel-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.time-button-group {
+  display: flex;
+  gap: 8px;
+}
+
+.time-button {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+
+  padding: 8px 12px;
+  background: #344052;
+  color: #ffffff;
+
+  font-size: 13px;
+  cursor: pointer;
+
+  transition: background 0.2s;
+}
+
+.time-button:hover {
+  background: #52647e;
+}
+
+.time-button.active {
+  background: #3f82ce;
+  border-color: #75b4ff;
+}
+
+@media (max-width: 600px) {
+  .time-panel {
+    top: 12px;
+    right: 12px;
+    padding: 12px;
+  }
+
+  .time-button {
+    padding: 7px 9px;
+    font-size: 12px;
+  }
+}
