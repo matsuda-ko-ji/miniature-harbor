@@ -13,6 +13,8 @@ import { createLighthouse } from './objects/Lighthouse.js';
 import { createBoat } from './objects/Boat.js';
 import { createLandscape } from './objects/Landscape.js';
 import { createOcean } from './objects/Ocean.js';
+import { createInteractionController } from './controllers/InteractionController.js';
+import { createObjectInfoPanel } from './ui/ObjectInfoPanel.js';
 
 // 時間帯の設定
 import { timePresets } from './config/TimePresets.js';
@@ -156,6 +158,61 @@ scene.add(boat);
 
 // 船の基準位置を保持
 const boatBaseY = boat.position.y;
+
+// ========================================
+// 3Dオブジェクトの情報表示
+// ========================================
+
+// 情報パネルを生成
+const objectInfoPanel = createObjectInfoPanel();
+
+// クリックできるオブジェクトを登録
+const interactiveTargets = [
+  {
+    object: houses[0],
+    title: '港町の黄色い家',
+    description:
+      '明るい色合いが特徴の住宅です。夜になると玄関灯と窓が温かく光ります。'
+  },
+  {
+    object: houses[1],
+    title: '港町の青い家',
+    description:
+      '海辺の小さな住宅です。港町の落ち着いた街並みを彩っています。'
+  },
+  {
+    object: houses[2],
+    title: '港町のピンクの家',
+    description:
+      'やさしい色合いの住宅です。街並みに華やかさを加えています。'
+  },
+  {
+    object: houses[3],
+    title: '港町のクリーム色の家',
+    description:
+      '交差点の近くに建つ住宅です。夜には窓から柔らかな光が漏れます。'
+  },
+  {
+    object: lighthouse,
+    title: '港の灯台',
+    description:
+      '港を見守る灯台です。回転する光が海を照らし、夜の港町を演出します。'
+  }
+];
+
+// Raycasterのクリック判定を開始
+createInteractionController({
+  camera,
+  renderer,
+  targets: interactiveTargets,
+  onSelect: (target) => {
+    if (target) {
+      objectInfoPanel.show(target);
+    } else {
+      objectInfoPanel.hide();
+    }
+  }
+});
 
 // ========================================
 // ④ 照明コントローラー
