@@ -20,6 +20,7 @@ export function createIsland(scene) {
 
   const grass = new THREE.Mesh(grassGeometry, grassMaterial);
   grass.position.y = 0.1;
+  grass.receiveShadow = true;
   scene.add(grass);
 
   // 海
