@@ -258,6 +258,9 @@ export function createLighthouse(x, z) {
   // main.jsからライトの回転を制御できるようにする
   lighthouse.userData.beacon = beacon;
 
+  // 外部からビームの透明度を変更できるようにする
+  lighthouse.userData.beamMaterial = beamMaterial;
+
   // ⑩ 影の設定
   lighthouse.traverse((object) => {
     if (object.isMesh && object !== beam) {
