@@ -105,8 +105,12 @@ scene.add(landscape);
 scene.add(createPier(4.8, 0));
 
 // 灯台
-// 灯台を生成して変数に保持
 const lighthouse = createLighthouse(3.5, 3.5);
+
+// ドアを島の中心方向へ向ける
+lighthouse.rotation.y = Math.PI;
+
+scene.add(lighthouse);
 
 // シーンに追加
 scene.add(lighthouse);
