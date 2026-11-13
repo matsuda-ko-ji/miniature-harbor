@@ -15,6 +15,7 @@ import { createLandscape } from './objects/Landscape.js';
 import { createOcean } from './objects/Ocean.js';
 import { createInteractionController } from './controllers/InteractionController.js';
 import { createObjectInfoPanel } from './ui/ObjectInfoPanel.js';
+import { createOutlineController } from './controllers/OutlineController.js';
 
 // 時間帯の設定
 import { timePresets } from './config/TimePresets.js';
@@ -164,7 +165,9 @@ const boatBaseY = boat.position.y;
 // ========================================
 
 // 情報パネルを生成
-const objectInfoPanel = createObjectInfoPanel();
+const objectInfoPanel = createObjectInfoPanel(() => {
+  outlineController.select(null);
+});
 
 // クリックできるオブジェクトを登録
 const interactiveTargets = [
@@ -205,11 +208,20 @@ createInteractionController({
   camera,
   renderer,
   targets: interactiveTargets,
+
   onSelect: (target) => {
     if (target) {
+      // 情報パネルを表示
       objectInfoPanel.show(target);
+
+      // 選択した3Dオブジェクトを強調
+      outlineController.select(target.object);
     } else {
+      // 情報パネルを非表示
       objectInfoPanel.hide();
+
+      // 輪郭を解除
+      outlineController.select(null);
     }
   }
 });
@@ -226,6 +238,16 @@ const lightingController = createLightingController({
   houses,
   lighthouse,
   timePresets
+});
+
+// ========================================
+// 輪郭表示コントローラー
+// ========================================
+
+const outlineController = createOutlineController({
+  renderer,
+  scene,
+  camera
 });
 
 // ========================================
@@ -247,15 +269,18 @@ controls.update();
 
 // ブラウザサイズ変更対応
 window.addEventListener('resize', () => {
-  camera.aspect =
-    window.innerWidth / window.innerHeight;
+  const width = window.innerWidth;
+  const height = window.innerHeight;
 
+  // カメラ
+  camera.aspect = width / height;
   camera.updateProjectionMatrix();
 
-  renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
-  );
+  // レンダラー
+  renderer.setSize(width, height);
+
+  // ポストプロセッシング
+  outlineController.resize(width, height);
 });
 
 // ========================================
@@ -361,7 +386,8 @@ function animate() {
   // 描画
   // ----------------------------------------
 
-  renderer.render(scene, camera);
+  // ポストプロセッシングを使用して描画
+  outlineController.render(delta);
 }
 
 // ========================================
