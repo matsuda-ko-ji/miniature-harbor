@@ -2,7 +2,7 @@
 /**
  * 3Dオブジェクトの情報パネル
  */
-export function createObjectInfoPanel() {
+export function createObjectInfoPanel(onClose = () => {}) {
   // パネルを作成
   const panel = document.createElement('div');
   panel.className = 'object-info-panel';
@@ -43,7 +43,10 @@ export function createObjectInfoPanel() {
     panel.hidden = true;
   }
 
-  closeButton.addEventListener('click', hide);
+  closeButton.addEventListener('click', () => {
+    hide();
+    onClose();
+});
 
   return {
     show,
