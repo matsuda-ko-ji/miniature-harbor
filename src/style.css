@@ -139,3 +139,53 @@ canvas {
   font-size: 24px;
   cursor: pointer;
 }
+
+
+/* ========================================
+   全体表示に戻るボタン
+======================================== */
+
+.reset-camera-button {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+
+  padding: 12px 18px;
+
+  background: rgba(17, 31, 48, 0.9);
+  color: #ffffff;
+
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+
+  z-index: 100;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.reset-camera-button:hover {
+  background: rgba(35, 65, 94, 0.95);
+  transform: translateY(-2px);
+}
+
+.reset-camera-button:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .reset-camera-button {
+    right: 12px;
+    bottom: 12px;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+}

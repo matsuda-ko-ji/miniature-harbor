@@ -16,6 +16,7 @@ import { createOcean } from './objects/Ocean.js';
 import { createInteractionController } from './controllers/InteractionController.js';
 import { createObjectInfoPanel } from './ui/ObjectInfoPanel.js';
 import { createOutlineController } from './controllers/OutlineController.js';
+import { createCameraController } from './controllers/CameraController.js';
 
 // 時間帯の設定
 import { timePresets } from './config/TimePresets.js';
@@ -204,6 +205,7 @@ const interactiveTargets = [
 ];
 
 // Raycasterのクリック判定を開始
+
 createInteractionController({
   camera,
   renderer,
@@ -211,19 +213,53 @@ createInteractionController({
 
   onSelect: (target) => {
     if (target) {
-      // 情報パネルを表示
+      // 情報パネル
       objectInfoPanel.show(target);
 
-      // 選択した3Dオブジェクトを強調
+      // 輪郭表示
       outlineController.select(target.object);
-    } else {
-      // 情報パネルを非表示
-      objectInfoPanel.hide();
 
-      // 輪郭を解除
+      // カメラを対象へ移動
+      const isLighthouse = target.object === lighthouse;
+
+      cameraController.focus(
+        target.object,
+        isLighthouse ? 6.5 : 4.5,
+        isLighthouse ? 1.4 : 0.7
+      );
+    } else {
+      // 情報パネル・輪郭を解除
+      objectInfoPanel.hide();
       outlineController.select(null);
+
+      // 自動移動が残っていれば中断
+      cameraController.cancel();
     }
   }
+});
+
+// ========================================
+// 全体表示に戻るボタン
+// ========================================
+
+const resetCameraButton = document.createElement('button');
+
+resetCameraButton.className = 'reset-camera-button';
+resetCameraButton.type = 'button';
+resetCameraButton.textContent = '⌂ 全体表示に戻る';
+
+document.body.appendChild(resetCameraButton);
+
+// クリック時の処理
+resetCameraButton.addEventListener('click', () => {
+  // カメラを初期位置へ滑らかに戻す
+  cameraController.reset();
+
+  // 選択中の輪郭を解除
+  outlineController.select(null);
+
+  // 情報パネルを閉じる
+  objectInfoPanel.hide();
 });
 
 // ========================================
@@ -266,6 +302,16 @@ controls.maxDistance = 30;
 controls.maxPolarAngle = Math.PI / 2.05;
 
 controls.update();
+
+// ========================================
+// カメラ移動コントローラー
+// ========================================
+
+// OrbitControlsの初期設定完了後に生成する
+const cameraController = createCameraController({
+  camera,
+  controls
+});
 
 // ブラウザサイズ変更対応
 window.addEventListener('resize', () => {
@@ -375,6 +421,12 @@ function animate() {
     delta,
     targetTimeOfDay
   );
+
+  // ----------------------------------------
+  // 自動カメラ移動
+  // ----------------------------------------
+  
+  cameraController.update(delta);
 
   // ----------------------------------------
   // カメラ操作
