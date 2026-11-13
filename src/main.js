@@ -28,6 +28,8 @@ camera.position.set(8, 7, 10);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
 document.querySelector('#app').appendChild(renderer.domElement);
 
 // ④ 照明
@@ -36,6 +38,20 @@ scene.add(ambientLight);
 
 const sunlight = new THREE.DirectionalLight(0xffffff, 2);
 sunlight.position.set(5, 10, 5);
+sunlight.castShadow = true;
+
+sunlight.shadow.mapSize.width = 2048;
+sunlight.shadow.mapSize.height = 2048;
+
+sunlight.shadow.camera.left = -12;
+sunlight.shadow.camera.right = 12;
+sunlight.shadow.camera.top = 12;
+sunlight.shadow.camera.bottom = -12;
+
+sunlight.shadow.camera.near = 0.5;
+sunlight.shadow.camera.far = 50;
+
+sunlight.shadow.bias = -0.0001;
 scene.add(sunlight);
 
 // ⑤ 島と海
@@ -84,7 +100,7 @@ scene.add(createPier(4.8, 0));
 
 // ⑩ 灯台
 // 灯台を生成して変数に保持
-const lighthouse = createLighthouse(3, 3);
+const lighthouse = createLighthouse(3.5, 3.5);
 
 // シーンに追加
 scene.add(lighthouse);
