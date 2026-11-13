@@ -17,6 +17,7 @@ import { createInteractionController } from './controllers/InteractionController
 import { createObjectInfoPanel } from './ui/ObjectInfoPanel.js';
 import { createOutlineController } from './controllers/OutlineController.js';
 import { createCameraController } from './controllers/CameraController.js';
+import { createBoatNavigationController } from './controllers/BoatNavigationController.js';
 
 // 時間帯の設定
 import { timePresets } from './config/TimePresets.js';
@@ -155,11 +156,18 @@ lighthouse.rotation.y = Math.PI;
 scene.add(lighthouse);
 
 // 船
-const boat = createBoat(6.5, 2);
+const boat = createBoat(9.5, 2);
 scene.add(boat);
 
-// 船の基準位置を保持
-const boatBaseY = boat.position.y;
+// ========================================
+// 船の航行コントローラー
+// ========================================
+
+const boatNavigationController =
+  createBoatNavigationController({
+    boat,
+    speed: 1.4
+  });
 
 // ========================================
 // 3Dオブジェクトの情報表示
@@ -387,17 +395,11 @@ function animate() {
   const elapsed = timer.getElapsed();
   const delta = timer.getDelta();
 
-  // ----------------------------------------
-  // 船のアニメーション
-  // ----------------------------------------
+  // ========================================
+  // 船の航行アニメーション
+  // ========================================
 
-  // 船の上下運動
-  boat.position.y =
-    boatBaseY + Math.sin(elapsed * 2) * 0.08;
-
-  // 船の傾き
-  boat.rotation.z =
-    Math.sin(elapsed * 1.5) * 0.04;
+  boatNavigationController.update(delta, elapsed);
 
   // ----------------------------------------
   // 灯台のアニメーション
