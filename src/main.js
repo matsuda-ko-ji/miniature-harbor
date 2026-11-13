@@ -11,6 +11,7 @@ import { createPier } from './objects/Pier.js';
 import { createLighthouse } from './objects/Lighthouse.js';
 import { createBoat } from './objects/Boat.js';
 import { createLandscape } from './objects/Landscape.js';
+import { createOcean } from './objects/Ocean.js';
 
 // シーン
 const scene = new THREE.Scene();
@@ -56,29 +57,12 @@ sunlight.shadow.bias = -0.0001;
 scene.add(sunlight);
 
 // 島と海
-const sea = createIsland(scene);
+// 島を作成
+createIsland(scene);
 
-function updateWaves(elapsed) {
-  const positions = sea.geometry.attributes.position;
-
-  for (let i = 0; i < positions.count; i++) {
-    const x = positions.getX(i);
-    const y = positions.getY(i);
-
-    // 2方向の波を重ねる
-    const wave1 = Math.sin(x * 0.7 + elapsed * 1.5) * 0.07;
-    const wave2 = Math.sin(y * 0.5 + elapsed * 1.1) * 0.04;
-
-    // 平面のローカルZ方向へ変形する
-    positions.setZ(i, wave1 + wave2);
-  }
-
-  // 頂点情報をGPUに再送する
-  positions.needsUpdate = true;
-
-  // 光の当たり方を更新
-  sea.geometry.computeVertexNormals();
-}
+// シェーダーを使った海を作成
+const ocean = createOcean();
+scene.add(ocean);
 
 // 道路
 scene.add(createRoad(0, 0, 1.2, 7));
@@ -162,7 +146,8 @@ function animate() {
 
   controls.update();
   renderer.render(scene, camera);
-  updateWaves(elapsed);
+  // GPUのシェーダーへ経過時間を渡す
+  ocean.userData.uniforms.uTime.value = elapsed;
 }
 
 renderer.setAnimationLoop(animate);
